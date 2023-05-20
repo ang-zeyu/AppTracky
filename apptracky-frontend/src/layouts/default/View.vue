@@ -1,0 +1,9 @@
+<template>
+  <v-main class="bg-grey-lighten-3">
+    <router-view />
+  </v-main>
+</template>
+
+<script lang="ts" setup>
+  //
+</script>
