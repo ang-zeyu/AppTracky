@@ -11,10 +11,22 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/applications")
 public class ApplicationController {
-    private ApplicationService applicationService;
+    private final ApplicationService applicationService;
 
     public ApplicationController(final ApplicationService applicationService) {
         this.applicationService = applicationService;
+    }
+
+    // Has S3 pre-signed URL populated
+    @GetMapping("/{id}")
+    public ApplicationDto getUserApplication(
+            @PathVariable long id,
+            @RequestParam Boolean includeResume,
+            final JwtAuthenticationToken authenticationToken
+    ) {
+        return applicationService.getUserApplication(
+                authenticationToken, id, includeResume
+        );
     }
 
     @GetMapping
@@ -23,19 +35,19 @@ public class ApplicationController {
     }
 
     @PostMapping
-    public void addUserApplication(
+    public ApplicationDto addUserApplication(
             @RequestBody @Valid final ApplicationDto applicationDto,
             final JwtAuthenticationToken authenticationToken
     ) {
-        applicationService.addOrUpdateApplication(applicationDto, authenticationToken, true);
+        return applicationService.addOrUpdateApplication(applicationDto, authenticationToken, true);
     }
 
     @PutMapping
-    public void updateUserApplication(
+    public ApplicationDto updateUserApplication(
             @RequestBody @Valid final ApplicationDto applicationDto,
             final JwtAuthenticationToken authenticationToken
     ) {
-        applicationService.addOrUpdateApplication(applicationDto, authenticationToken, false);
+        return applicationService.addOrUpdateApplication(applicationDto, authenticationToken, false);
     }
 
     @DeleteMapping

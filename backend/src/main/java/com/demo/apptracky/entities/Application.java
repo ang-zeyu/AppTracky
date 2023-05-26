@@ -35,6 +35,9 @@ public class Application {
     @NotNull
     private ApplicationStage applicationStage;
 
+    @Column(name = "has_resume")
+    private boolean hasResume = false;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     @NotNull
@@ -100,6 +103,14 @@ public class Application {
 
     public void setApplicationStage(ApplicationStage applicationStage) {
         this.applicationStage = applicationStage;
+    }
+
+    public boolean getHasResume() {
+        return hasResume;
+    }
+
+    public void setHasResume(boolean hasResume) {
+        this.hasResume = hasResume;
     }
 
     public User getUser() {

@@ -65,6 +65,16 @@
                   @click="deleteApplication($event, application)"
                 >
                 </v-btn>
+                <v-btn
+                  v-if="application.hasResume"
+                  size="x-small"
+                  icon="mdi-file"
+                  color="grey"
+                  rounded
+                  class="mt-1 apt-application-card-action"
+                  @click="openResumeUrl($event, application.id)"
+                >
+                </v-btn>
               </div>
             </template>
           </v-card>
@@ -75,7 +85,7 @@
       <v-card :min-width="400">
         <v-card-title>{{ formState.id ? 'Edit Application' : 'Add Application' }}</v-card-title>
         <v-card-item>
-          <v-form @submit="submitForm">
+          <v-form @submit.prevent="submitForm">
             <v-text-field
               label="Title"
               prepend-inner-icon="mdi-format-title"
@@ -108,7 +118,17 @@
               v-model="formState.applicationStage"
               :rules="validators.stage"
             ></v-select>
-            <v-btn type="submit" block color="blue-lighten-1" class="mt-3" ripple>Submit</v-btn>
+            <v-file-input
+              accept=".pdf"
+              label="Resume"
+              prepend-icon=""
+              prepend-inner-icon="mdi-paperclip"
+              name="resume"
+            >
+            </v-file-input>
+            <v-btn type="submit" block color="blue-lighten-1" class="mt-3" ripple>
+              {{ formState.id ? 'Update' : 'Submit' }}
+            </v-btn>
           </v-form>
         </v-card-item>
       </v-card>
@@ -128,10 +148,14 @@ interface Application {
   url: string,
   company: string,
   recruiter?: string,
-  applicationStage: string
+  applicationStage: string,
+  hasResume: boolean,
+  resumeGetUrl?: string,
+  resumePutUrl?: string,
 }
 
-const applications: Ref<Application[]> = ref([]);
+// ---------------------------------------------------
+// Drag and drop
 const selectedCol: Ref<string | undefined> = ref();
 
 function cardOnDragStart(ev: DragEvent) {
@@ -166,23 +190,10 @@ function colOnDragOver(ev: DragEvent) {
   ev.preventDefault();
   (ev.dataTransfer as DataTransfer).dropEffect = 'move';
 }
+// ---------------------------------------------------
 
-async function refreshApplications() {
-  const resp = await getCustom('api/applications');
-  const apps = await resp.json() as Application[];
-  applications.value = apps;
-}
-
-refreshApplications();
-
-const stages = [
-  { displayName: 'Saved', value: 'SAVED' },
-  { displayName: 'Applied', value: 'APPLIED' },
-  { displayName: 'Interviewing', value: 'INTERVIEWING' },
-  { displayName: 'Offer', value: 'OFFER' },
-  { displayName: 'Hired', value: 'HIRED' },
-  { displayName: 'Rejected', value: 'REJECTED' },
-];
+// ---------------------------------------------------
+// Constants
 
 const initialFormState = {
   id: null,
@@ -193,14 +204,71 @@ const initialFormState = {
   applicationStage: null,
   show: false
 };
+
+const stages = [
+  { displayName: 'Saved', value: 'SAVED' },
+  { displayName: 'Applied', value: 'APPLIED' },
+  { displayName: 'Interviewing', value: 'INTERVIEWING' },
+  { displayName: 'Offer', value: 'OFFER' },
+  { displayName: 'Hired', value: 'HIRED' },
+  { displayName: 'Rejected', value: 'REJECTED' },
+];
+
+const validators = {
+  title: [
+    (v?: string) => (v && v.length > 2) || 'A job title is required'
+  ],
+  url: [
+    (v?: string) => (v && /^(http(s):\/\/.)[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(v))
+      || 'Invalid URL'
+  ],
+  company: [
+    (v?: string) => (v && v.length > 2) || 'A company is required'
+  ],
+  stage: [
+    (v?: string) => (v && stages.some(s => s.value === v)) || 'Please select where you are at in the application.'
+  ],
+}
+
+// ---------------------------------------------------
+
+// ---------------------------------------------------
+// Data
+
+const applications: Ref<Application[]> = ref([]);
 const formState: any = reactive({ ...initialFormState });
+
+// ---------------------------------------------------
+
+// ---------------------------------------------------
+// Methods
+
+async function openResumeUrl(ev: MouseEvent, id: number) {
+  ev.preventDefault();
+  ev.stopPropagation();
+
+  const application = await (await getCustom(`api/applications/${id}?includeResume=true`)).json() as Application;
+  if (!application.resumeGetUrl) {
+    await refreshApplications();
+    // TODO error
+    return;
+  }
+
+  open(application.resumeGetUrl, '_blank');
+}
+
+async function refreshApplications() {
+  const resp = await getCustom('api/applications');
+  const apps = await resp.json() as Application[];
+  applications.value = apps;
+}
 
 function openAddForm() {
   Object.assign(formState, initialFormState);
   formState.show = true;
 }
 
-function openEditForm(ev: MouseEvent, application: Application) {
+async function openEditForm(ev: MouseEvent, application: Application) {
   ev.preventDefault();
   ev.stopPropagation();
   formState.id = application.id;
@@ -224,44 +292,70 @@ async function deleteApplication(ev: MouseEvent, application: Application) {
   await refreshApplications();
 }
 
-const validators = {
-  title: [
-    (v?: string) => (v && v.length > 2) || 'A job title is required'
-  ],
-  url: [
-    (v?: string) => (v && /^(http(s):\/\/.)[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(v))
-      || 'Invalid URL'
-  ],
-  company: [
-    (v?: string) => (v && v.length > 2) || 'A company is required'
-  ],
-  stage: [
-    (v?: string) => (v && stages.some(s => s.value === v)) || 'Please select where you are at in the application.'
-  ],
-}
-
 async function submitForm(ev: SubmitEventPromise) {
-  if (!(await ev).valid) {
+  const validationResult = await ev;
+  if (!validationResult.valid) {
     console.log(formState.valid);
     return;
   }
 
-  if (formState.id) {
-    await putCustom('api/applications', {
-      ...formState
-    });
-  } else {
-    await postCustom('api/applications', {
-      ...formState
-    });
+  const isEdit = !!formState.id;
+
+  const fileInputEl = (ev.target as HTMLFormElement).elements.namedItem('resume') as HTMLInputElement;
+  const fileList = fileInputEl.files;
+  const file = fileList && fileList.length && fileList[0];
+
+  const savedApplicationResp = isEdit
+    ? await putCustom('api/applications', { ...formState, hasResume: !!file })
+    : await postCustom('api/applications', { ...formState, hasResume: !!file });
+
+  async function revert() {
+    if (isEdit) {
+      await putCustom('api/applications', { ...applications.value.find(app => app.id === formState.id) });
+    } else {
+      await delCustom('api/applications', { ...savedApplicationResp });
+    }
+    await refreshApplications();
+
+    // TODO UI error instead and return
+    throw new Error('s3PutUrl does not exist');
   }
-  // TODO error states
+
+  if (file) {
+    const savedApplication = await savedApplicationResp.json() as Application;
+    const s3PutUrl = savedApplication.resumePutUrl;
+    if (!s3PutUrl) {
+      // Revert, delete the application or re-edit it
+      await revert();
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('Content-Type', file.type);
+    formData.append('file', file);
+
+    try {
+      await fetch(s3PutUrl, {
+        method: 'PUT',
+        body: formData
+      });
+    } catch (ex) {
+      await revert();
+      throw ex;
+    }
+  }
+
+  // TODO error, loading states
 
   formState.show = false;
   await refreshApplications();
 }
+// ---------------------------------------------------
 
+// ---------------------------------------------------
+// Initialisation
 
+refreshApplications();
 </script>
 
 <style>

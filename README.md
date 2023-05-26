@@ -10,11 +10,11 @@ Done:
 - [x] Frontend
    - [x] Layout scaffolding
    - [x] Authentication related things
- - [x] Drag-and-drop kanban board for applications and APIs
- 
+- [x] Drag-and-drop kanban board for applications and APIs
+- [x] Presigned urls S3 uploads for PDF resumes
+
 TBD:
-- [ ] S3 uploads for PDF resumes
-- [ ] AWS SSM Parameter Store / Secrets Manager integration
+- [ ] AWS SSM Parameter Store / Secrets Manager integration for OAuth secrets
 
 The backend is built with Spring Boot, and heavy use of Spring Security for Authentication.
 

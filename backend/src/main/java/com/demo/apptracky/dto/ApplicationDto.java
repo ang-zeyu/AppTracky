@@ -25,6 +25,12 @@ public class ApplicationDto {
 
     private ApplicationStage applicationStage;
 
+    private Boolean hasResume;
+
+    private String resumeGetUrl;
+
+    private String resumePutUrl;
+
     public Long getId() {
         return id;
     }
@@ -71,5 +77,29 @@ public class ApplicationDto {
 
     public void setApplicationStage(ApplicationStage applicationStage) {
         this.applicationStage = applicationStage;
+    }
+
+    public Boolean getHasResume() {
+        return hasResume;
+    }
+
+    public void setHasResume(Boolean hasResume) {
+        this.hasResume = hasResume;
+    }
+
+    public String getResumeGetUrl() {
+        return resumeGetUrl;
+    }
+
+    public void setResumeGetUrl(String resumeGetUrl) {
+        this.resumeGetUrl = resumeGetUrl;
+    }
+
+    public String getResumePutUrl() {
+        return resumePutUrl;
+    }
+
+    public void setResumePutUrl(String resumePutUrl) {
+        this.resumePutUrl = resumePutUrl;
     }
 }
