@@ -3,7 +3,6 @@ package com.demo.apptracky.services;
 import com.demo.apptracky.dao.ApplicationDao;
 import com.demo.apptracky.dto.ApplicationDto;
 import com.demo.apptracky.entities.Application;
-import com.demo.apptracky.entities.enums.ApplicationStage;
 import com.demo.apptracky.entities.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -45,9 +44,6 @@ public class ApplicationService {
         }
 
         final Application application = propMapper.map(applicationDto, Application.class);
-        if (isAdd) {
-            application.setApplicationStage(ApplicationStage.APPLIED);
-        }
         application.setUser(new User(userId));
 
         applicationDao.save(application);

@@ -3,6 +3,7 @@ package com.demo.apptracky.dto;
 import com.demo.apptracky.entities.enums.ApplicationStage;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.URL;
 
 public class ApplicationDto {
     private Long id;
@@ -11,6 +12,8 @@ public class ApplicationDto {
     @Size(min = 1, max = 128)
     private String title;
 
+    @NotNull
+    @URL
     private String url;
 
     @NotNull

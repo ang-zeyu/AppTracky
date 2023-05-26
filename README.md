@@ -10,13 +10,21 @@ Done:
 - [x] Frontend
    - [x] Layout scaffolding
    - [x] Authentication related things
-   - [ ] Drag-and-drop kanban board for applications
+ - [x] Drag-and-drop kanban board for applications and APIs
+ 
+TBD:
+- [ ] S3 uploads for PDF resumes
+- [ ] AWS SSM Parameter Store / Secrets Manager integration
 
 The backend is built with Spring Boot, and heavy use of Spring Security for Authentication.
 
 Both basic auth and oauth flows ultimately result in the issuing of a JWT used for endpoint authentication and authorization. 
 
 Frontend is a simple Vue app built on Vuetify + Vite.
+
+![](./screenshots/ss6.png)
+
+![](./screenshots/ss5.png)
 
 ![](./screenshots/ss1.png)
 

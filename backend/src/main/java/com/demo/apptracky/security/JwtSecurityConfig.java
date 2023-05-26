@@ -75,7 +75,7 @@ public class JwtSecurityConfig {
                 .formLogin().disable()
                 .httpBasic().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                 .and()
-                .exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+                .exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.FORBIDDEN))
                 .and()
                 .csrf().disable()
                 .cors().configurationSource(corsConfigurationSource()).and()

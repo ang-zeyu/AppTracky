@@ -9,7 +9,6 @@
 import { handleOAuthAuthorizationResponse } from '@/utils/oauth';
 import DefaultBar from './AppBar.vue'
 import DefaultView from './View.vue'
-import { useRouter } from 'vue-router';
 import { getUser } from '@/utils/user';
   
 // -------------------------------------------
@@ -17,7 +16,6 @@ import { getUser } from '@/utils/user';
 // after being redirected back from the auth server.
 // If there is one.
 
-const router = useRouter();
 const wasLoggedIn = !!getUser();
 function redirectOAuth(successful: boolean) {
   // Remove all OAuth query parameters and redirect

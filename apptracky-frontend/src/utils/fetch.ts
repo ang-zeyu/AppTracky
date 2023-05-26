@@ -8,16 +8,23 @@ export async function fetchCustom(apiUrl: string, options: RequestInit): Promise
     (options.headers as any)['Authorization'] = 'Bearer ' + jwt;
   }
 
-  return await fetch(import.meta.env.VITE_API_BASE_URL + apiUrl, options);
-}
-
-export async function getCustom(apiUrl: string, options: RequestInit = {}): Promise<Response> {
-  const resp = await fetchCustom(apiUrl, { method: 'POST', ...options });
+  const resp = await fetch(import.meta.env.VITE_API_BASE_URL + apiUrl, options);
   if (resp.status !== 200) {
-    throw new Error(resp.status + '');
+    let respJson;
+    try {
+      respJson = await resp.json();
+    } catch (ex) {
+      throw new Error(resp.status + '');
+    }
+
+    throw new Error(respJson.message);
   }
 
   return resp;
+}
+
+export async function getCustom(apiUrl: string, options: RequestInit = {}): Promise<Response> {
+  return await fetchCustom(apiUrl, { method: 'GET', ...options });
 }
 
 export async function postCustom(
@@ -33,11 +40,31 @@ export async function postCustom(
     : (isJson ? 'application/json' : 'application/octet-stream');
   options.body = isJson ? JSON.stringify(body) : body;
 
-  const resp = await fetchCustom(apiUrl, { method: 'POST', ...options });
-  if (resp.status !== 200) {
-    const respJson = await resp.json();
-    throw new Error(respJson.message);
-  }
+  return await fetchCustom(apiUrl, { method: 'POST', ...options });
+}
 
-  return resp;
+export async function putCustom(
+  apiUrl: string,
+  body: any,
+  options: RequestInit = {},
+): Promise<Response> {
+  options.headers = options.headers || {};
+
+  (options.headers as any)['Content-Type'] = 'application/json';
+  options.body = JSON.stringify(body);
+
+  return await fetchCustom(apiUrl, { method: 'PUT', ...options });
+}
+
+export async function delCustom(
+  apiUrl: string,
+  body: any,
+  options: RequestInit = {},
+): Promise<Response> {
+  options.headers = options.headers || {};
+
+  (options.headers as any)['Content-Type'] = 'application/json';
+  options.body = JSON.stringify(body);
+
+  return await fetchCustom(apiUrl, { method: 'DELETE', ...options });
 }
