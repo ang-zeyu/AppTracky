@@ -12,9 +12,12 @@ Done:
    - [x] Authentication related things
 - [x] Drag-and-drop kanban board for applications and APIs
 - [x] Presigned urls S3 uploads for PDF resumes
+- [x] AWS SSM Parameter Store integration for OAuth secrets
 
 TBD:
-- [ ] AWS SSM Parameter Store / Secrets Manager integration for OAuth secrets
+- [ ] Containerize
+- [ ] Setup IAM roles
+- [ ] CloudFormation template to deploy to ECS
 
 The backend is built with Spring Boot, and heavy use of Spring Security for Authentication.
 

@@ -1,5 +1,6 @@
 package com.demo.apptracky.rest;
 
+import com.demo.apptracky.config.SsmParameterStoreConfig;
 import com.demo.apptracky.dto.RegisterDto;
 import com.demo.apptracky.dto.ResetPasswordDto;
 import com.demo.apptracky.dto.UserDto;
