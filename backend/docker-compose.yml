@@ -1,0 +1,22 @@
+# For development only.
+services:
+  db:
+    image: 'postgres:latest'
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=apptracky
+    ports:
+      - 5432:5432 # if docker-compose up db only
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    depends_on:
+      - db
+    volumes:
+      - ~/.aws:/root/.aws
+      - ./src:/app/src
+    ports:
+      - 8080:8080
+      - 5005:5005

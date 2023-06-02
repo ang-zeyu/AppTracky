@@ -13,11 +13,10 @@ Done:
 - [x] Drag-and-drop kanban board for applications and APIs
 - [x] Presigned urls S3 uploads for PDF resumes
 - [x] AWS SSM Parameter Store integration for OAuth secrets
+- [x] Containerize the backend for easier development, and ECS deployment
 
 TBD:
-- [ ] Containerize
-- [ ] Setup IAM roles
-- [ ] CloudFormation template to deploy to ECS
+- [ ] Deploy to ECS (IAM roles, maybe CF template, ..., CI/CD with gh actions)
 
 The backend is built with Spring Boot, and heavy use of Spring Security for Authentication.
 

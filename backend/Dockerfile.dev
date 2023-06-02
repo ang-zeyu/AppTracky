@@ -1,0 +1,19 @@
+FROM amazoncorretto:17
+WORKDIR /app
+
+RUN yum -y update ca-certificates
+RUN amazon-linux-extras install epel -y
+RUN yum -y update
+# If using windows, project files must be on WSL.
+RUN yum -y install inotify-tools
+
+COPY ./gradle gradle
+COPY ./gradlew gradlew
+COPY ./dev.sh dev.sh
+COPY ./build.gradle build.gradle
+COPY ./settings.gradle settings.gradle
+
+# Cache dependencies
+VOLUME ["/root/.gradle", "/app/.gradle", "/app/build"]
+
+ENTRYPOINT ./dev.sh
