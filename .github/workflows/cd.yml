@@ -1,0 +1,41 @@
+name: CD
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and Deploy Image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker-practice/actions-setup-docker@master
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '17'
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_ACCESS_KEY_SECRET }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - run: >
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} |
+          docker login --username AWS --password-stdin ${{ secrets.ECR_URL }}
+
+      - name: Build Backend Image and Push to ECR
+        working-directory: backend
+        run: ./gradlew build
+          && docker build . -t apptracky-backend
+          && docker tag apptracky-backend ${{ secrets.ECR_URL }}/${{ secrets.ECR_TAG }}
+          && docker push ${{ secrets.ECR_URL }}/${{ secrets.ECR_TAG }}
+
+      - name: Build and Upload Frontend to S3
+        working-directory: apptracky-frontend
+        run: npm install && npm run build && aws s3 cp ./dist ${{ secrets.S3_BUCKET }} --recursive
