@@ -37,7 +37,7 @@ public class StatelessOAuth2AuthorizationRequestRepository
 
     @Override
     public OAuth2AuthorizationRequest loadAuthorizationRequest(final HttpServletRequest request) {
-        System.out.println("loadAuthorizationRequest");
+        log.debug("loadAuthorizationRequest");
 
         try (ServletInputStream inputStream = request.getInputStream()) {
             final byte[] decryptedReqBody = encryptionService.decrypt(inputStream.readAllBytes());
@@ -55,7 +55,7 @@ public class StatelessOAuth2AuthorizationRequestRepository
             final HttpServletRequest request,
             final HttpServletResponse response
     ) {
-        System.out.println("saveAuthorizationRequest");
+        log.debug("saveAuthorizationRequest");
         try {
             final byte[] serialized = SerializationUtils.serialize(authorizationRequest);
             final byte[] encrypted = encryptionService.encrypt(serialized);
@@ -71,7 +71,7 @@ public class StatelessOAuth2AuthorizationRequestRepository
             final HttpServletRequest request,
             final HttpServletResponse response
     ) {
-        System.out.println("removeAuthorizationRequest");
+        log.debug("removeAuthorizationRequest");
         // Handled by client
         return loadAuthorizationRequest(request);
     }

@@ -87,7 +87,7 @@
             Failed to change password.
           </v-alert>
           <v-alert v-else-if="didAssociationFail" type="error">
-            Google account association failed!
+            Google account association failed! Did you validate your email?
           </v-alert>
         </v-sheet>
       </v-col>

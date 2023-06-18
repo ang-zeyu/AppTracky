@@ -29,7 +29,6 @@ public class CustomUserDetailsService implements UserDetailsService {
             // OAuth only account
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
-        System.out.println("yes" + user.getUsername() + user.getPassword());
 
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),

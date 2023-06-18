@@ -80,6 +80,6 @@ public class SsmParameterStoreConfig implements ApplicationListener<ApplicationE
 
         props.put(CLIENT_ID_KEY, clientId);
         props.put(CLIENT_ID_SECRET, clientSecret);
-        environment.getPropertySources().addFirst(new PropertiesPropertySource("oauth", props));
+        environment.getPropertySources().addFirst(new PropertiesPropertySource("ssm", props));
     }
 }

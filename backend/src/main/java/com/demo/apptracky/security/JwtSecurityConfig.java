@@ -136,7 +136,7 @@ public class JwtSecurityConfig {
     }*/
 
     @Bean
-    @Profile("local")
+    // @Profile("local") TODO comment below
     public RSAKey rsaKeyLocal() throws NoSuchAlgorithmException, FileNotFoundException {
         final File publicKeyResource = ResourceUtils.getFile("classpath:public.key");
         final File privateKeyResource = ResourceUtils.getFile("classpath:private.key");
@@ -169,8 +169,8 @@ public class JwtSecurityConfig {
                 .build();
     }
 
-    @Bean
-    @Profile("!local")
+    // @Bean
+    // @Profile("!local") TODO perhaps store this in SSM as well
     public RSAKey rsaKeyProd() {
         throw new UnsupportedOperationException("RSA Key retrieval for PROD unimplemented");
     }
@@ -178,12 +178,7 @@ public class JwtSecurityConfig {
     @Bean
     public JWKSource jwkSource(final RSAKey rsaKey) {
         var jwkSet = new JWKSet(rsaKey);
-        return new JWKSource() {
-            @Override
-            public List<JWK> get(JWKSelector jwkSelector, SecurityContext securityContext) throws KeySourceException {
-                return jwkSelector.select(jwkSet);
-            }
-        };
+        return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
     }
 
     @Bean

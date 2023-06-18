@@ -1,13 +1,9 @@
 package com.demo.apptracky.services;
 
-import com.demo.apptracky.dao.UserDao;
 import com.demo.apptracky.entities.User;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.ses.SesAsyncClient;
-import software.amazon.awssdk.services.ses.SesClient;
 import software.amazon.awssdk.services.ses.model.*;
 
 import java.util.UUID;

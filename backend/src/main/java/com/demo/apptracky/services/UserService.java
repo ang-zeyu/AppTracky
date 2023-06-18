@@ -201,7 +201,7 @@ public class UserService {
                 .map(Authority::getName)
                 .collect(Collectors.joining(" "));
 
-        System.out.println(subject + " | " + claims);
+        log.debug(subject + " | " + claims);
 
         var claimSet = JwtClaimsSet.builder()
                 .issuer("self")

@@ -18,6 +18,5 @@ public class OAuth2ClientRedirectStrategy extends DefaultRedirectStrategy {
 
         response.setStatus(HttpServletResponse.SC_OK);
         response.setHeader("X-Oauth2-Redirect", response.encodeRedirectURL(url));
-        System.out.println(response.getContentType());
     }
 }

@@ -39,11 +39,11 @@ public class Application {
     private boolean hasResume = false;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     @NotNull
     private User user;
 
-    @Column(name = "user_id", insertable = false, updatable = false)
+    @Column(name = "user_id", insertable = false, updatable = false, nullable = false)
     private Long userId;
 
     public Application() {}
