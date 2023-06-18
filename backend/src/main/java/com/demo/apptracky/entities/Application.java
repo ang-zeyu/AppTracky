@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "applications")
 public class Application {
@@ -38,6 +40,9 @@ public class Application {
     @Column(name = "has_resume")
     private boolean hasResume = false;
 
+    @Column(name = "date", updatable = false, nullable = false)
+    private Date date;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     @NotNull
@@ -55,6 +60,11 @@ public class Application {
         this.recruiter = recruiter;
         this.applicationStage = applicationStage;
         this.user = user;
+    }
+
+    @PrePersist
+    protected void beforePersist() {
+        date = new Date();
     }
 
     public Long getId() {
@@ -111,6 +121,14 @@ public class Application {
 
     public void setHasResume(boolean hasResume) {
         this.hasResume = hasResume;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public User getUser() {

@@ -1,6 +1,5 @@
 package com.demo.apptracky.entities;
 
-import com.demo.apptracky.entities.enums.AuthProvider;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
@@ -41,6 +40,10 @@ public class User {
 
     @Column(name = "forgot_pw_expiry")
     private Long forgotPwExpiry;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    @NotNull
+    private UserSettings userSettings;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Application> applications;
@@ -84,6 +87,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public UserSettings getUserSettings() {
+        return userSettings;
+    }
+
+    public void setUserSettings(UserSettings userSettings) {
+        this.userSettings = userSettings;
     }
 
     public List<Application> getApplications() {

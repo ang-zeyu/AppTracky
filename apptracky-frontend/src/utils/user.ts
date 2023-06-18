@@ -5,7 +5,13 @@ export interface UserDto {
   email: string,
   isGoogle: boolean,
   isValidated: boolean,
-  roles: string[]
+  roles: string[],
+  settings?: UserSettingsDto
+}
+
+export interface UserSettingsDto {
+  password?: string,
+  isReportingEnabled: boolean
 }
 
 const USER_KEY = 'user';

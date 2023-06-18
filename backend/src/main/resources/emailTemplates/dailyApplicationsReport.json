@@ -1,0 +1,8 @@
+{
+  "Template": {
+    "TemplateName": "ApptrackyDailyApplicationsReport",
+    "SubjectPart": "Greetings, {{name}}. Here are your active applications.",
+    "HtmlPart": "<h1>Hello {{name}},</h1><p>Here is your daily job applications report:</p><p><strong>Stale applications (&gt; 20 days):</strong>{{stale}}</p><p><strong>Active applications:</strong>{{active}}</p>",
+    "TextPart": "Hello {{name}},\r\nHere is your daily job applications report:\r\nStale applications (> 20 days): {{stale}}\r\nActive applications: {{active}}"
+  }
+}

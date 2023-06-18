@@ -2,9 +2,11 @@ package com.demo.apptracky.services;
 
 import com.demo.apptracky.dao.UserDao;
 import com.demo.apptracky.dto.RegisterDto;
+import com.demo.apptracky.dto.SettingsDto;
 import com.demo.apptracky.dto.UserDto;
 import com.demo.apptracky.entities.Authority;
 import com.demo.apptracky.entities.User;
+import com.demo.apptracky.entities.UserSettings;
 import com.demo.apptracky.entities.enums.AuthProvider;
 import com.demo.apptracky.exceptions.InvalidJwtException;
 import com.demo.apptracky.utils.Roles;
@@ -130,6 +132,9 @@ public class UserService {
         final Authority authority = new Authority(Roles.ROLE_JOBSEEKER);
         authority.setUser(user);
         user.setAuthorities(List.of(authority));
+        final UserSettings userSettings = new UserSettings();
+        userSettings.setUser(user);
+        user.setUserSettings(userSettings);
 
         try {
             user = userDao.save(user);
@@ -143,15 +148,25 @@ public class UserService {
     /**
      * Also associates a basic auth user to an OAuth-only user, if applicable.
      */
-    public void changePassword(
-            final String password,
+    public UserDto updateSettings(
+            final SettingsDto settingsDto,
             final JwtAuthenticationToken authentication
     ) {
         final long userId = getUserIdFromJwt(authentication);
-        final User user = userDao.findById(userId)
+        User user = userDao.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
-        user.setPassword(passwordEncoder.encode(password));
-        userDao.save(user);
+
+        if (settingsDto.password() != null) {
+            user.setPassword(passwordEncoder.encode(settingsDto.password()));
+        }
+        if (settingsDto.isReportingEnabled() != null) {
+            final UserSettings userSettings = user.getUserSettings();
+            userSettings.setIsReportingEnabled(settingsDto.isReportingEnabled());
+        }
+
+        user = userDao.save(user);
+
+        return getUserDto(user, authentication.getToken().getTokenValue());
     }
 
     public void forgotPassword(final String userEmail) {
@@ -221,6 +236,7 @@ public class UserService {
         final UserDto userDto = propMapper.map(user, UserDto.class);
         userDto.setJwtToken(jwtToken);
         userDto.setRoles(user.getAuthorities().stream().map(Authority::getName).collect(Collectors.toList()));
+        userDto.setSettings(new SettingsDto(null, user.getUserSettings().getIsReportingEnabled()));
         return userDto;
     }
 }

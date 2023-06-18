@@ -18,6 +18,7 @@ Job application tracking demo app made mostly to:
    - [x] Authentication related things
 - [x] Drag-and-drop kanban board for applications and APIs
 - [x] Presigned urls S3 uploads for PDF resumes
+- [x] Daily application report emails, user validation emails, reset password emails with AWS SES
 - [x] AWS SSM Parameter Store integration for OAuth/RDS secrets
 - [x] Containerize the backend for easier development, and ECS deployment
 - [x] Setup ECS task defs, cluster, S3 bucket policies, IAM for GH actions

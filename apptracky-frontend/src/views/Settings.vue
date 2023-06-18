@@ -62,13 +62,17 @@
               variant="solo-filled"
               prepend-inner-icon="mdi-email"
             ></v-text-field>
+            <v-switch
+              v-model="formState.isReportingEnabled"
+              label="Receive Daily Reports"
+            ></v-switch>
           </v-form>
           <v-btn
             block
             class="mb-5"
-            @click="changePassword"
+            @click="updateSettings"
           >
-            Change Password
+            Update Settings
           </v-btn>
           <v-btn
             v-if="!user?.isGoogle"
@@ -98,6 +102,7 @@
 <script lang="ts" setup>
 import { getCustom, postCustom } from '@/utils/fetch';
 import { storeOAuthRequest } from '@/utils/oauth';
+import { UserDto, UserSettingsDto, saveUser } from '@/utils/user';
 import { getUser } from '@/utils/user';
 import { Ref } from 'vue';
 import { reactive, ref } from 'vue';
@@ -109,26 +114,32 @@ const didChangePasswordSucceed: Ref<boolean | undefined> = ref();
 const didAssociationFail: Ref<boolean> = ref(route.query['success'] === 'false');
 
 const form = ref();
-const user = getUser();
+const user = getUser() as UserDto;
 const formState = reactive({
-  username: user?.username,
-  email: user?.email,
+  username: user.username,
+  email: user.email,
   password: '',
+  isReportingEnabled: user.settings!.isReportingEnabled,
   valid: null,
 });
 
 const passwordValidation = [
-  (v?: string) => (v && v.length >= 8) ? true : 'Password should be at least 8 characters'
+  (v: string) => v.length === 0 ? true : (v.length >= 8 ? true : 'Password should be at least 8 characters')
 ];
 
-async function changePassword() {
-  form.value.validate();
+async function updateSettings() {
+  await form.value.validate();
   if (!formState.valid) {
     return;
   }
 
   try {
-    await postCustom('api/auth/change-password', formState.password);
+    const resp = await postCustom('api/auth/update-settings', {
+      isReportingEnabled: formState.isReportingEnabled,
+      password: formState.password || null
+    } as UserSettingsDto);
+    const user = await resp.json() as UserDto;
+    saveUser(user);
     didChangePasswordSucceed.value = true;
   } catch (ex) {
     didChangePasswordSucceed.value = false;

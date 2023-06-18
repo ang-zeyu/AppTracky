@@ -1,8 +1,8 @@
 package com.demo.apptracky.rest;
 
-import com.demo.apptracky.config.SsmParameterStoreConfig;
 import com.demo.apptracky.dto.RegisterDto;
 import com.demo.apptracky.dto.ResetPasswordDto;
+import com.demo.apptracky.dto.SettingsDto;
 import com.demo.apptracky.dto.UserDto;
 import com.demo.apptracky.entities.enums.AuthProvider;
 import com.demo.apptracky.services.UserService;
@@ -35,16 +35,16 @@ public class AuthController {
         return userService.registerUser(regDto, AuthProvider.SELF);
     }
 
-    @PostMapping("/change-password")
-    public void resetPw(
-            @RequestBody final String password,
+    @PostMapping("/update-settings")
+    public UserDto updateSettings(
+            @RequestBody final SettingsDto settingsDto,
             final JwtAuthenticationToken authenticationToken
     ) {
-        if (password.length() < 8) {
+        if (settingsDto.password() != null && settingsDto.password().length() < 8) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password should be 8 characters long");
         }
 
-        userService.changePassword(password, authenticationToken);
+        return userService.updateSettings(settingsDto, authenticationToken);
     }
 
     @PostMapping("/forgot-password")

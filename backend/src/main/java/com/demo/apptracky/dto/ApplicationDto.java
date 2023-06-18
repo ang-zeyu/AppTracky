@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.URL;
 
+import java.util.Date;
+
 public class ApplicationDto {
     private Long id;
 
@@ -26,6 +28,8 @@ public class ApplicationDto {
     private ApplicationStage applicationStage;
 
     private Boolean hasResume;
+
+    private Date date;
 
     private String resumeGetUrl;
 
@@ -85,6 +89,14 @@ public class ApplicationDto {
 
     public void setHasResume(Boolean hasResume) {
         this.hasResume = hasResume;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public String getResumeGetUrl() {

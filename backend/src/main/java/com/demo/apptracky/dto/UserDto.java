@@ -17,6 +17,8 @@ public class UserDto {
 
     private List<String> roles;
 
+    private SettingsDto settings;
+
     public String getJwtToken() {
         return jwtToken;
     }
@@ -71,5 +73,13 @@ public class UserDto {
 
     public void setRoles(List<String> roles) {
         this.roles = roles;
+    }
+
+    public SettingsDto getSettings() {
+        return settings;
+    }
+
+    public void setSettings(SettingsDto settings) {
+        this.settings = settings;
     }
 }
