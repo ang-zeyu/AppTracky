@@ -80,10 +80,6 @@ public class JwtSecurityConfig {
                 .csrf().disable()
                 .cors().configurationSource(corsConfigurationSource()).and()
                 .oauth2Login(oauth2 -> {
-                    // oauth2.redirectionEndpoint().baseUri(baseUrl).and().successHandler();
-                    /*oauth2.successHandler((request, response, authentication) -> {
-
-                    });*/
                     oauth2.authorizationEndpoint(conf -> conf
                             .authorizationRedirectStrategy(new OAuth2ClientRedirectStrategy())
                             .authorizationRequestRepository(requestRepository));
@@ -108,7 +104,6 @@ public class JwtSecurityConfig {
         configuration.setAllowedOrigins(Collections.singletonList(baseUrl));
         configuration.setAllowedMethods(Collections.singletonList("*"));
         configuration.setExposedHeaders(Collections.singletonList("X-Oauth2-Redirect"));
-        //configuration.set
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
